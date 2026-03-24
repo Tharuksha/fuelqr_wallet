@@ -30,10 +30,13 @@ export function GeneratorCard() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+  const [qrPayload, setQrPayload] = useState<string | null>(null);
   const [passTitle, setPassTitle] = useState("Fuel Pass");
   const [vehicleNumber, setVehicleNumber] = useState("");
   const [holderName, setHolderName] = useState("");
-  const [success, setSuccess] = useState(false);
+  const [walletMessage, setWalletMessage] = useState<string | null>(null);
+  const [walletError, setWalletError] = useState<string | null>(null);
+  const [walletLoading, setWalletLoading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [isValidating, setIsValidating] = useState(false);
   const validatingRef = useRef(false);
@@ -55,6 +58,7 @@ export function GeneratorCard() {
 
         if (result.ok) {
           setQrDataUrl(result.dataUrl);
+          setQrPayload(result.qrPayload);
           setUploadError(null);
           return;
         }
@@ -78,9 +82,63 @@ export function GeneratorCard() {
     [loadFile]
   );
 
-  const onWalletClick = () => {
-    setSuccess(true);
-    globalThis.setTimeout(() => setSuccess(false), 2200);
+  const onWalletClick = async () => {
+    setWalletError(null);
+    setWalletMessage(null);
+
+    if (!qrPayload?.length) {
+      setWalletError("Upload a QR image first so the pass can include a barcode.");
+      return;
+    }
+
+    setWalletLoading(true);
+    try {
+      const res = await fetch("/api/wallet-pass", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          passTitle,
+          vehicleNumber,
+          holderName,
+          qrPayload,
+        }),
+      });
+
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "FuelPass.pkpass";
+        a.rel = "noopener";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        setWalletMessage(
+          "Pass downloaded. On iPhone, open the file—Wallet should offer to add it."
+        );
+        return;
+      }
+
+      let detail = `Something went wrong (${res.status}).`;
+      try {
+        const data = (await res.json()) as { code?: string; message?: string };
+        if (data.code === "SIGNING_NOT_CONFIGURED") {
+          detail =
+            "Wallet signing is not configured on this server. Add Apple Pass Type ID certificates and the PASS_* / APPLE_* environment variables to enable real .pkpass downloads.";
+        } else if (data.message) {
+          detail = data.message;
+        }
+      } catch {
+        /* use default */
+      }
+      setWalletError(detail);
+    } catch {
+      setWalletError("Network error. Check your connection and try again.");
+    } finally {
+      setWalletLoading(false);
+    }
   };
 
   const dropzoneStateClass = getDropzoneStateClass(
@@ -147,26 +205,47 @@ export function GeneratorCard() {
               />
             </LiveFrame>
 
-            <div className="flex flex-col gap-3">
+            <div className="relative z-20 flex flex-col gap-3">
               <motion.button
                 type="button"
-                onClick={onWalletClick}
-                whileHover={disableGestures ? undefined : { scale: 1.01 }}
-                whileTap={disableGestures ? undefined : { scale: 0.99 }}
-                className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-zinc-100 text-[15px] font-semibold text-zinc-950 transition-colors hover:bg-white sm:h-[3.25rem]"
+                onClick={() => void onWalletClick()}
+                disabled={walletLoading}
+                aria-busy={walletLoading}
+                whileHover={
+                  disableGestures || walletLoading ? undefined : { scale: 1.01 }
+                }
+                whileTap={
+                  disableGestures || walletLoading ? undefined : { scale: 0.99 }
+                }
+                className="flex h-12 w-full touch-manipulation items-center justify-center gap-2 rounded-full bg-zinc-100 text-[15px] font-semibold text-zinc-950 transition-colors hover:bg-white enabled:cursor-pointer disabled:cursor-wait disabled:opacity-70 sm:h-[3.25rem]"
               >
-                <WalletIcon className="h-5 w-5" />
-                Add to Apple Wallet
+                <WalletIcon className="h-5 w-5 shrink-0" />
+                {walletLoading ? "Preparing pass…" : "Add to Apple Wallet"}
               </motion.button>
               <AnimatePresence>
-                {success && (
+                {walletError && (
                   <motion.p
+                    key="wallet-err"
+                    role="alert"
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -4 }}
-                    className="text-center text-sm text-zinc-500"
+                    className="text-center text-sm text-red-300/90"
                   >
-                    Ready when you connect issuance for signed passes.
+                    {walletError}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+              <AnimatePresence>
+                {walletMessage && !walletError && (
+                  <motion.p
+                    key="wallet-ok"
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    className="text-center text-sm text-zinc-400"
+                  >
+                    {walletMessage}
                   </motion.p>
                 )}
               </AnimatePresence>

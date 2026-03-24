@@ -1,0 +1,41 @@
+{
+  "formatVersion": 1,
+  "passTypeIdentifier": "pass.com.fuelpass.placeholder",
+  "serialNumber": "placeholder-serial",
+  "teamIdentifier": "PLACEHOLDER",
+  "organizationName": "Fuel Pass",
+  "description": "Fuel Pass",
+  "foregroundColor": "rgb(250, 250, 250)",
+  "backgroundColor": "rgb(24, 24, 27)",
+  "labelColor": "rgb(161, 161, 170)",
+  "generic": {
+    "primaryFields": [
+      {
+        "key": "title",
+        "label": "PASS",
+        "value": "Fuel Pass"
+      }
+    ],
+    "secondaryFields": [
+      {
+        "key": "vehicle",
+        "label": "VEHICLE",
+        "value": "—"
+      }
+    ],
+    "auxiliaryFields": [
+      {
+        "key": "holder",
+        "label": "NAME",
+        "value": "—"
+      }
+    ]
+  },
+  "barcodes": [
+    {
+      "message": " ",
+      "format": "PKBarcodeFormatQR",
+      "messageEncoding": "iso-8859-1"
+    }
+  ]
+}

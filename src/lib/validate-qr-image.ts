@@ -1,7 +1,7 @@
 import jsQR from "jsqr";
 
 export type QrValidateResult =
-  | { ok: true; dataUrl: string }
+  | { ok: true; dataUrl: string; qrPayload: string }
   | { ok: false; reason: string };
 
 function readFileAsDataUrl(file: File): Promise<string> {
@@ -91,7 +91,15 @@ export async function validateQrImageFile(file: File): Promise<QrValidateResult>
     seen.add(maxEdge);
     const result = decodeQrFromImage(img, maxEdge);
     if (result) {
-      return { ok: true, dataUrl };
+      const qrPayload = result.data?.trim() ?? "";
+      if (!qrPayload.length) {
+        return {
+          ok: false,
+          reason:
+            "This QR decoded to an empty payload. Try a different image or QR.",
+        };
+      }
+      return { ok: true, dataUrl, qrPayload };
     }
   }
 
