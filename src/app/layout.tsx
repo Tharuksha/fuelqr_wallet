@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Syne } from "next/font/google";
 import { LenisProvider } from "@/components/layout/lenis-provider";
 import { PageTransition } from "@/components/layout/page-transition";
+import { PwaRegister } from "@/components/pwa/pwa-register";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -28,6 +29,22 @@ export const metadata: Metadata = {
   },
   description:
     "Digital fuel passes for Apple Wallet—with in-browser QR validation and a live preview.",
+  applicationName: "Fuel Pass",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "Fuel Pass",
+    statusBarStyle: "black-translucent",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
+  themeColor: "#09090b",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({
@@ -41,6 +58,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-[#09090b] text-zinc-100">
+        <PwaRegister />
         <LenisProvider>
           <PageTransition>{children}</PageTransition>
         </LenisProvider>

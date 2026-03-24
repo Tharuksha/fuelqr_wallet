@@ -59,7 +59,6 @@ interface SourceIngestPanelProps {
   readonly qrDataUrl: string | null;
   readonly uploadError: string | null;
   readonly dropzoneStateClass: string;
-  /** Set when this panel sits inside a parent card so it does not add another frame. */
   readonly embedded?: boolean;
 }
 

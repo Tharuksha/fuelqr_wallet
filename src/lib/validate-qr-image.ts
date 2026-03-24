@@ -55,7 +55,6 @@ function decodeQrFromImage(
   });
 }
 
-/** Reads the file in the browser and checks that a QR code can be read from it. */
 export async function validateQrImageFile(file: File): Promise<QrValidateResult> {
   if (!file.type.startsWith("image/")) {
     return {

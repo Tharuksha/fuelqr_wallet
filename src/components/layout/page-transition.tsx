@@ -14,7 +14,6 @@ export function PageTransition({ children }: PageTransitionProps) {
   const pathname = usePathname();
   const hydrated = useHydrated();
   const prefersReducedMotion = useReducedMotion() === true;
-  // No enter animation until we’re hydrated or if the user asked for less motion (matches server output).
   const instantRouteMotion = !hydrated || prefersReducedMotion;
   const lenis = useLenis();
   const skipScrollResetRef = useRef(true);

@@ -27,11 +27,12 @@ npm run lint    # eslint
 
 - **`src/app/`** — Pages and the root layout (Next.js App Router).
 - **`src/components/layout/`** — Header, footer, smooth scroll, page transitions.
+- **`src/components/pwa/`** — Service worker registration for installable web app behavior.
 - **`src/components/landing/`** — Home page sections.
 - **`src/components/composer/`** — Upload, QR check, preview, and related UI.
-- **`src/components/how-it-works/`** — The bilingual guide page.
+- **`src/app/how-it-works/`** — Bilingual guide route; `_components/` and `_lib/` hold the view and copy.
 - **`src/hooks/`** — Shared React hooks (hydration, motion safety).
-- **`src/lib/`** — Config, copy, and the in-browser QR helper.
+- **`src/lib/`** — Site config and the in-browser QR helper.
 
 ## Stack
 

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { HowItWorksView } from "@/components/how-it-works/how-it-works-view";
-import { HOW_IT_WORKS_COPY } from "@/lib/how-it-works-content";
+import { HowItWorksView } from "./_components/how-it-works-view";
+import { HOW_IT_WORKS_COPY } from "./_lib/how-it-works-content";
 
 export const metadata: Metadata = {
   title: "How it works",

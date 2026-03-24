@@ -8,7 +8,7 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import {
   getHowItWorksCopy,
   type HowItWorksLocale,
-} from "@/lib/how-it-works-content";
+} from "../_lib/how-it-works-content";
 
 const LOCALE_STORAGE_KEY = "fuel-pass-how-locale";
 

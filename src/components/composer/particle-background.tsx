@@ -1,6 +1,5 @@
 "use client";
 
-/** Quiet full-page backdrop (grid + soft gradients). */
 export function ParticleBackground() {
   return (
     <div

@@ -2,7 +2,6 @@ import { siteDeveloper } from "@/lib/site-config";
 
 interface SiteFooterProps {
   tagline: string;
-  /** Extra space above the footer (Tailwind class, e.g. mt-20). */
   marginTopClass?: string;
 }
 
